@@ -28,4 +28,17 @@ public class ElasticDaoImpTest {
             i++;
         }
     }
+
+    @Test
+    public void findSimilar() {
+        elasticDaoImp = new ElasticDao();
+        Map<String, Float> searchResult = elasticDaoImp.findSimilar("fire climate southern america");
+        System.out.println(searchResult.size());
+        Set<String> hits = searchResult.keySet();
+        int i = 1;
+        for(String hit: hits){
+            System.out.println(i + "\t" + hit + "\t" + searchResult.get(hit));
+            i++;
+        }
+    }
 }

@@ -82,7 +82,37 @@ public class ElasticDao {
 
     }
 
+    public Map<String, Float> findSimilar(String text) {
+        Map<String, Float> results = new HashMap<>();
+        SearchRequest searchRequest = new SearchRequest();
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        String[] fields = {"pageText"};
+        String[] texts = {text};
+        searchSourceBuilder.query(QueryBuilders.moreLikeThisQuery(fields, texts, null).minTermFreq(1));
+        searchSourceBuilder.size(20);
+        searchRequest.source(searchSourceBuilder);
+        SearchResponse searchResponse = null;
+        boolean searchStatus = false;
+        while (!searchStatus) {
+            try {
+                searchResponse = client.search(searchRequest);
+                searchStatus = true;
+            } catch (IOException e) {
+                System.out.println("Elastic connection timed out! Trying again...");
+                searchStatus = false;
+            }
+        }
+        SearchHit[] hits = searchResponse.getHits().getHits();
+        int i = 1;
+        for (SearchHit hit : hits) {
+            Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+            results.put((String) sourceAsMap.get("pageLink"), hit.getScore());
+        }
+        return sortByValues(results);
+    }
+
 }
+
 
 class Compare implements Comparator{
 
