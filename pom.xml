@@ -71,6 +71,11 @@
       <artifactId>elasticsearch-rest-high-level-client</artifactId>
       <version>6.3.2</version>
     </dependency>
+    <dependency>
+      <groupId>com.googlecode.clichemaven</groupId>
+      <artifactId>cliche</artifactId>
+      <version>110413</version>
+    </dependency>
   </dependencies>
 
   <build>

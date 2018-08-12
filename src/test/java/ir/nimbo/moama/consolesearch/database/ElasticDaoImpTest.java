@@ -6,21 +6,19 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.*;
-
 public class ElasticDaoImpTest {
-    private ElasticDaoImp elasticDaoImp;
+    private ElasticDao elasticDaoImp;
 
     @Test
     public void search() {
-        elasticDaoImp = new ElasticDaoImp();
+        elasticDaoImp = new ElasticDao();
         ArrayList<String> necessaryWords = new ArrayList<>();
         ArrayList<String> forbiddenWords = new ArrayList<>();
         ArrayList<String> preferredWords = new ArrayList<>();
-        necessaryWords.add("iran");
-        forbiddenWords.add("israel");
-        forbiddenWords.add("U.S.A");
-        preferredWords.add("world");
+        necessaryWords.add("youtube");
+//        forbiddenWords.add("israel");
+//        forbiddenWords.add("U.S.A");
+//        preferredWords.add("world");
         Map<String, Float> searchResult = elasticDaoImp.search(necessaryWords,preferredWords,forbiddenWords);
         System.out.println(searchResult.size());
         Set<String> hits = searchResult.keySet();

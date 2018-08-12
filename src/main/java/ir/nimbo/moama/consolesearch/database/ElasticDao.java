@@ -17,12 +17,12 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class ElasticDaoImp {
+public class ElasticDao {
     private RestHighLevelClient client;
     private String index = "pages";
     private Logger errorLogger = Logger.getLogger("error");
 
-    public ElasticDaoImp() {
+    public ElasticDao() {
         client = new RestHighLevelClient(
                 RestClient.builder(
                         new HttpHost("94.23.214.93", 9200, "http")));
@@ -38,7 +38,7 @@ public class ElasticDaoImp {
         searchRequest.source(searchSourceBuilder);
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         for(String necessaryWord:necessaryWords) {
-            boolQueryBuilder.must(QueryBuilders.matchQuery("pageText", necessaryWord));
+            boolQueryBuilder.must(QueryBuilders.matchQuery("pageLink", necessaryWord));
         }
         for(String preferredWord:preferredWords) {
             boolQueryBuilder.should(QueryBuilders.matchQuery("pageText", preferredWord));
