@@ -3,6 +3,7 @@ package ir.nimbo.moama.consolesearch.console;
 import asg.cliche.Command;
 import asg.cliche.Param;
 import ir.nimbo.moama.consolesearch.database.ElasticDao;
+import ir.nimbo.moama.consolesearch.database.HBaseDao;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class Console {
         Map<String,Float> results = elasticDao.search(necessaryWords,preferredWords,forbiddenWords);
         int i = 1;
         for(Map.Entry result: results.entrySet()){
-            System.out.println(i + "\t" + result.getKey() + "\t" + result.getValue());
+            System.out.println(i + "\t" + result.getKey() + "\t" + (int) result.getValue());
             i++;
         }
     }
@@ -39,6 +40,20 @@ public class Console {
             i++;
         }
     }
+
+    @Command(description = "Simple Search Optimized")
+    public void simpleSearchOmptimized(){
+        ArrayList<String> words = new ArrayList<>();
+        getInput(words, "");
+        Map<String,Float> results = elasticDao.search(words, new ArrayList<>(), new ArrayList<>());
+        System.out.println("here");
+        HBaseDao hBaseDao = new HBaseDao();
+        for(Map.Entry result: results.entrySet()){
+            Double newRank = hBaseDao.getRank((String) result.getKey()) + (Float) result.getValue();
+            System.out.println(newRank);
+        }
+    }
+
 
     public void getInput(ArrayList<String> list, String type){
         System.out.println("Please add you desired" + type + " words or phrases for search.");
