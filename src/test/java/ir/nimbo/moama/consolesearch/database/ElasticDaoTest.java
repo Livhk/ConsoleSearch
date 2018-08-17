@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Set;
 
 public class ElasticDaoImpTest {
-    private ElasticDao elasticDaoImp;
+    private ElasticDao elasticDao;
 
     @Test
     public void search() {
-        elasticDaoImp = new ElasticDao();
+        elasticDao = new ElasticDao();
         ArrayList<String> necessaryWords = new ArrayList<>();
         ArrayList<String> forbiddenWords = new ArrayList<>();
         ArrayList<String> preferredWords = new ArrayList<>();
@@ -19,7 +19,7 @@ public class ElasticDaoImpTest {
 //        forbiddenWords.add("israel");
 //        forbiddenWords.add("U.S.A");
 //        preferredWords.add("world");
-        Map<String, Float> searchResult = elasticDaoImp.search(necessaryWords,preferredWords,forbiddenWords);
+        Map<String, Float> searchResult = elasticDao.search(necessaryWords,preferredWords,forbiddenWords);
         System.out.println(searchResult.size());
         Set<String> hits = searchResult.keySet();
         int i = 1;
@@ -31,8 +31,8 @@ public class ElasticDaoImpTest {
 
     @Test
     public void findSimilar() {
-        elasticDaoImp = new ElasticDao();
-        Map<String, Float> searchResult = elasticDaoImp.findSimilar("fire climate southern america");
+        elasticDao = new ElasticDao();
+        Map<String, Float> searchResult = elasticDao.findSimilar("fire climate southern america");
         System.out.println(searchResult.size());
         Set<String> hits = searchResult.keySet();
         int i = 1;
@@ -40,5 +40,10 @@ public class ElasticDaoImpTest {
             System.out.println(i + "\t" + hit + "\t" + searchResult.get(hit));
             i++;
         }
+    }
+
+    @Test
+    public void count(){
+        System.out.println(elasticDao.count());
     }
 }
