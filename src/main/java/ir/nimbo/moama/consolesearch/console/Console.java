@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 public class Console {
     ElasticDao elasticDao = new ElasticDao();
+    HBaseDao hBaseDao = new HBaseDao();
     String input = "";
 
     @Command(description = "Advanced Search- by necessary, forbidden and preferred statements")
@@ -41,16 +42,29 @@ public class Console {
         }
     }
 
-    @Command(description = "Simple Search Optimized")
-    public void simpleSearchOmptimized(){
+    @Command(description = "Simple Search Optimized with Reference Count")
+    public void simpleSearchOptimizedWithReferenceCount(){
         ArrayList<String> words = new ArrayList<>();
         getInput(words, "");
         Map<String,Float> results = elasticDao.search(words, new ArrayList<>(), new ArrayList<>());
-        System.out.println("here");
-        HBaseDao hBaseDao = new HBaseDao();
+        System.out.println("Primary Results:");
+        int i = 1;
         for(Map.Entry result: results.entrySet()){
-            Double newRank = hBaseDao.getRank((String) result.getKey()) + (Float) result.getValue();
-            System.out.println(newRank);
+            System.out.println(i + "\t" + result.getKey() + "\t" + result.getValue());
+            i++;
+        }
+        i = 1;
+        for(Map.Entry result: results.entrySet()){
+            System.out.println(i + ":");
+            i++;
+            result.setValue((0.8) * (Float) result.getValue() + (0.2) * hBaseDao.getReference((String) result.getKey()));
+        }
+        ElasticDao.sortByValues(results);
+        System.out.println("Optimized results with reference counts:");
+        i = 1;
+        for(Map.Entry result: results.entrySet()){
+            System.out.println(i + "\t" + result.getKey() + "\t" + result.getValue());
+            i++;
         }
     }
 

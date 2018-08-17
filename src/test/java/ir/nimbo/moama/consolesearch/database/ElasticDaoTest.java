@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
-public class ElasticDaoImpTest {
+public class ElasticDaoTest {
     private ElasticDao elasticDao;
 
     @Test
@@ -42,8 +42,4 @@ public class ElasticDaoImpTest {
         }
     }
 
-    @Test
-    public void count(){
-        System.out.println(elasticDao.count());
-    }
 }

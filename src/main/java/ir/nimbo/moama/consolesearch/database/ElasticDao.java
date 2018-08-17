@@ -6,13 +6,17 @@ import org.apache.http.HttpHost;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.Scroll;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.util.*;
@@ -33,10 +37,8 @@ public class ElasticDao {
     public Map<String, Float> search(ArrayList<String> necessaryWords, ArrayList<String> preferredWords, ArrayList<String> forbiddenWords) {
         Map<String, Float> results = new HashMap<>();
         SearchRequest searchRequest = new SearchRequest(index);
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchRequest.types("_doc");
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        searchRequest.source(searchSourceBuilder);
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         for(String necessaryWord:necessaryWords) {
             boolQueryBuilder.must(QueryBuilders.matchQuery("pageLink", necessaryWord));
@@ -62,7 +64,7 @@ public class ElasticDao {
         return sortByValues(results);
     }
 
-    private static Map<String, Float> sortByValues(Map<String, Float> map) {
+    public static Map<String, Float> sortByValues(Map<String, Float> map) {
         List<Map.Entry<String, Float>> list = new LinkedList<>(map.entrySet());
         list.sort(new Compare());
         Map<String, Float> sortedHashMap = new LinkedHashMap<>();
@@ -105,5 +107,4 @@ public class ElasticDao {
         }
         return searchResponse;
     }
-
 }
