@@ -1,22 +1,18 @@
 package ir.nimbo.moama.consolesearch.database;
 
 
-import ir.nimbo.moama.consolesearch.util.Compare;
+import ir.nimbo.moama.consolesearch.util.SortResults;
 import org.apache.http.HttpHost;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.Scroll;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.util.*;
@@ -25,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 public class ElasticDao {
     private RestHighLevelClient client;
     private String index = "pages";
-    private Logger errorLogger = Logger.getLogger("error");
 
     public ElasticDao() {
         client = new RestHighLevelClient(
@@ -61,18 +56,7 @@ public class ElasticDao {
             Map<String, Object> sourceAsMap = hit.getSourceAsMap();
             results.put((String) sourceAsMap.get("pageLink"), hit.getScore());
         }
-        return sortByValues(results);
-    }
-
-    public static Map<String, Float> sortByValues(Map<String, Float> map) {
-        List<Map.Entry<String, Float>> list = new LinkedList<>(map.entrySet());
-        list.sort(new Compare());
-        Map<String, Float> sortedHashMap = new LinkedHashMap<>();
-        for (Map.Entry<String, Float> entry : list) {
-            sortedHashMap.put(entry.getKey(), entry.getValue());
-        }
-        return sortedHashMap;
-
+        return SortResults.sortByValues(results);
     }
 
     public Map<String, Float> findSimilar(String text) {
@@ -90,7 +74,7 @@ public class ElasticDao {
             Map<String, Object> sourceAsMap = hit.getSourceAsMap();
             results.put((String) sourceAsMap.get("pageLink"), hit.getScore());
         }
-        return sortByValues(results);
+        return SortResults.sortByValues(results);
     }
 
     private SearchResponse runSearch(SearchRequest searchRequest){

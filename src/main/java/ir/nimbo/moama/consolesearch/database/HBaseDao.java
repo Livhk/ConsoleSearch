@@ -35,27 +35,27 @@ public class HBaseDao {
         }
     }
 
-    public Integer getReference(String url){
+    public int getReference(String url){
         Get get = new Get(Bytes.toBytes(url));
+        int score = 0;
         get.addColumn(contextFamily.getBytes(), "pageRank".getBytes());
         try{
             Table t = connection.getTable(webPageTable);
             Result result = t.get(get);
             if(result.listCells() != null) {
                 List<Cell> cells =  result.listCells();
-                System.out.println("PageRank is: " + Bytes.toInt(CellUtil.cloneValue(cells.get(0))));
-                return Bytes.toInt(CellUtil.cloneValue(cells.get(0)));
+                score = Bytes.toInt(CellUtil.cloneValue(cells.get(0)));
             }
             else{
-                System.out.println("url not found in HBase! count set to 1 on default");
-                System.out.println("PageRank is: " + 1);
-                return 1;
+                System.out.println("url not found in HBase! Page Reference set to 1 on default!");
+                score = 1;
             }
+            System.out.println("Page Reference for " + url + " is: " + score);
 
         } catch (IOException e) {
             System.out.println("couldn't get document for " + url + " from HBase!");
         }
-        return 1;
+        return score;
     }
 
 

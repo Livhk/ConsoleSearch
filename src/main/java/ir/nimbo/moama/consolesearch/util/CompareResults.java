@@ -3,7 +3,7 @@ package ir.nimbo.moama.consolesearch.util;
 import java.util.Comparator;
 import java.util.Map;
 
-public class Compare implements Comparator {
+public class CompareResults implements Comparator {
 
     @Override
     public int compare(Object o1, Object o2) {
